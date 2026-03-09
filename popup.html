@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Google Sans', Roboto, sans-serif;
+      width: 240px;
+      padding: 16px;
+      background: #fff;
+      color: #202124;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .icon {
+      font-size: 22px;
+    }
+
+    .title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .subtitle {
+      font-size: 11px;
+      color: #5f6368;
+    }
+
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px 14px;
+      background: #1a73e8;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 13px;
+      font-family: inherit;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: center;
+      transition: background 0.15s;
+    }
+
+    .btn:hover { background: #1557b0; }
+
+    .hint {
+      font-size: 11px;
+      color: #80868b;
+      margin-top: 10px;
+      text-align: center;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="icon">💰</span>
+    <div>
+      <div class="title">Meeting Cost Tracker</div>
+      <div class="subtitle">Google Calendar</div>
+    </div>
+  </div>
+  <button class="btn" id="open-settings">Open Settings</button>
+  <p class="hint">Open a meeting in Google Calendar to see the cost estimate injected into the event details.</p>
+  <script>
+    document.getElementById('open-settings').addEventListener('click', () => {
+      chrome.runtime.openOptionsPage();
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+/* Meeting Cost Tracker - Injected Widget Styles */
+
+.mct-widget {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 8px 0;
+  font-family: 'Google Sans', Roboto, Arial, sans-serif;
+  font-size: 14px;
+  color: #202124;
+  margin: 2px 0;
+  box-sizing: border-box;
+}
+
+.mct-icon-col {
+  font-size: 18px;
+  width: 20px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 1px;
+  opacity: 0.75;
+}
+
+.mct-content-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.mct-main-text {
+  font-size: 14px;
+  color: #202124;
+  line-height: 1.4;
+}
+
+.mct-main-text strong {
+  font-weight: 600;
+}
+
+.mct-sub-text {
+  font-size: 12px;
+  color: #5f6368;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+.mct-settings-link {
+  color: #1a73e8;
+  text-decoration: none;
+}
+
+.mct-settings-link:hover {
+  text-decoration: underline;
+}
