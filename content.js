@@ -6,7 +6,11 @@ const WIDGET_CLASS = 'mct-widget';
 
 function getSettings() {
   return new Promise(resolve => {
-    chrome.storage.sync.get({ roles: [], attendeeMap: {} }, resolve);
+    chrome.storage.sync.get({ roles: [] }, syncData => {
+      chrome.storage.local.get({ attendeeMap: {} }, localData => {
+        resolve({ roles: syncData.roles, attendeeMap: localData.attendeeMap });
+      });
+    });
   });
 }
 

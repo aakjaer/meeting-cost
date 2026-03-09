@@ -73,7 +73,7 @@
   <p class="hint">Open a meeting in Google Calendar to see the cost estimate injected into the event details.</p>
   <script>
     document.getElementById('open-settings').addEventListener('click', () => {
-      chrome.runtime.openOptionsPage();
+      chrome.tabs.create({ url: chrome.runtime.getURL('settings.html') });
     });
   </script>
 </body>

@@ -5,7 +5,8 @@
   "description": "Displays the cost of meetings in Google Calendar based on attendee roles.",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "tabs"
   ],
   "host_permissions": [
     "https://calendar.google.com/*"

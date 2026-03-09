@@ -252,6 +252,34 @@
 
     .col-label.email { flex: 1; padding-left: 12px; }
     .col-label.role  { flex: 0 0 160px; padding-left: 10px; }
+
+    .section-desc code {
+      font-family: 'Roboto Mono', monospace;
+      font-size: 11px;
+      background: #f1f3f4;
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: #c5221f;
+    }
+
+    .import-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-file {
+      cursor: pointer;
+    }
+
+    .import-status {
+      font-size: 13px;
+      color: #188038;
+    }
+
+    .import-status.error {
+      color: #c5221f;
+    }
   </style>
 </head>
 <body>
@@ -272,6 +300,24 @@
       </div>
       <div id="roles-list"></div>
       <button class="btn-add" id="add-role">+ Add role</button>
+    </section>
+
+    <!-- Import Section -->
+    <section>
+      <div class="section-title">Import Employees from CSV</div>
+      <div class="section-desc">
+        Load a local CSV with columns: <code>name, email, original_title, role_id, ...</code><br>
+        The <code>role_id</code> must match one of the role IDs from the role taxonomy
+        (e.g. <code>engineering_lead</code>, <code>product_std</code>, <code>leadership</code>).
+        Rows without an email are skipped.
+      </div>
+      <div class="import-bar">
+        <label class="btn-add btn-file">
+          Choose CSV file
+          <input type="file" id="csv-file-input" accept=".csv" style="display:none">
+        </label>
+        <span class="import-status" id="import-status"></span>
+      </div>
     </section>
 
     <!-- Attendee Map Section -->
