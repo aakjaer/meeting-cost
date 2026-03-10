@@ -2,6 +2,12 @@
 
 const WIDGET_CLASS = 'mct-widget';
 
+// Material Icons "payments" — front bill (outlined ring) + coin circle + back bill
+const MONEY_ICON = `<svg class="mct-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+  <path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-2 0H3V6h14v8zm-7-1c1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3 1.34 3 3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/>
+</svg>`;
+const pendingModals = new WeakSet(); // prevents concurrent injection on the same modal
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function getSettings() {
@@ -85,7 +91,7 @@ function buildCostWidget(matched, unmatched, durationHours) {
 
   if (matched.length === 0) {
     widget.innerHTML = `
-      <div class="mct-icon-col">💰</div>
+      <div class="mct-icon-col">${MONEY_ICON}</div>
       <div class="mct-content-col">
         <div class="mct-main-text">No attendees matched to roles.</div>
         <div class="mct-sub-text"><a href="#" class="mct-settings-link">Configure roles in settings →</a></div>
@@ -114,7 +120,7 @@ function buildCostWidget(matched, unmatched, durationHours) {
   }
 
   widget.innerHTML = `
-    <div class="mct-icon-col">💰</div>
+    <div class="mct-icon-col">${MONEY_ICON}</div>
     <div class="mct-content-col">
       <div class="mct-main-text">${mainHtml}</div>
       <div class="mct-sub-text">${subText}</div>
@@ -125,19 +131,53 @@ function buildCostWidget(matched, unmatched, durationHours) {
 
 // ─── Injection ───────────────────────────────────────────────────────────────
 
+async function expandAttendees(modal) {
+  // Find the "N guests" text leaf
+  const guestsEl = Array.from(modal.querySelectorAll('*')).find(el =>
+    el.childElementCount === 0 && /^\d+\s+guests?$/i.test(el.textContent.trim())
+  );
+  if (!guestsEl) return;
+
+  // Walk up from the "N guests" leaf until we find a container that has
+  // [aria-expanded="false"] descendants (up to 12 levels, stopping before the modal).
+  let searchRoot = guestsEl;
+  let clicked = false;
+  for (let i = 0; i < 12; i++) {
+    if (!searchRoot.parentNode || searchRoot.parentNode === modal) break;
+    searchRoot = searchRoot.parentNode;
+    const collapsed = searchRoot.querySelectorAll('[aria-expanded="false"]');
+    if (collapsed.length > 0) {
+      collapsed.forEach(el => el.click());
+      clicked = true;
+      break;
+    }
+  }
+
+  if (clicked) await new Promise(r => setTimeout(r, 800));
+}
+
 async function tryInjectCost(modal) {
-  // Guard: skip if already injected
+  // Guard: skip if already injected or a concurrent run is in progress
   if (modal.querySelector(`.${WIDGET_CLASS}`)) return;
+  if (pendingModals.has(modal)) return;
+  pendingModals.add(modal);
 
-  const { roles, attendeeMap } = await getSettings();
+  try {
+    const { roles, attendeeMap } = await getSettings();
 
-  // Wait for Google to finish rendering attendees
-  await new Promise(r => setTimeout(r, 700));
+    // Wait for Google to finish initial render
+    await new Promise(r => setTimeout(r, 700));
 
-  // Re-check guard after delay
-  if (modal.querySelector(`.${WIDGET_CLASS}`)) return;
+    // Re-check after delay
+    if (modal.querySelector(`.${WIDGET_CLASS}`)) return;
+
+    // Expand collapsed attendee sections before extracting emails
+    await expandAttendees(modal);
 
   const emails = extractAttendeeEmails(modal);
+  // If no emails found at all, don't inject — allows re-injection after manual expansion
+  if (emails.length === 0) return;
+
   const durationHours = parseDuration(modal);
   const { matched, unmatched } = matchAttendeesToRoles(emails, roles, attendeeMap);
   const widget = buildCostWidget(matched, unmatched, durationHours);
@@ -176,6 +216,9 @@ async function tryInjectCost(modal) {
     } else {
       modal.appendChild(widget);
     }
+  }
+  } finally {
+    pendingModals.delete(modal);
   }
 }
 

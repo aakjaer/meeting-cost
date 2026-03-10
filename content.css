@@ -3,24 +3,38 @@
 .mct-widget {
   display: flex;
   align-items: flex-start;
-  gap: 16px;
-  padding: 8px 0;
+  /* No left padding — icon col replicates Google Calendar's .EaVNbc geometry */
+  padding: 6px 20px 6px 0;
+  margin: 0;
+  box-sizing: border-box;
   font-family: 'Google Sans', Roboto, Arial, sans-serif;
   font-size: 14px;
-  color: #202124;
-  margin: 2px 0;
-  box-sizing: border-box;
+  color: var(--gm3-sys-color-on-surface, #202124);
 }
 
 .mct-icon-col {
-  font-size: 18px;
-  width: 20px;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /*
+   * DevTools shows Google Calendar's .hMdQi .EaVNbc icon column as:
+   *   width: 40px (content) + padding-left: 28px = 68px total rendered width
+   * Replicating that exactly puts our icon and text start at the same x as native rows.
+   */
+  flex: 0 0 68px;
+  width: 68px;
+  box-sizing: border-box;
+  padding-left: 28px;
+  /* Nudge down 1px so SVG optical centre lines up with text cap-height */
   padding-top: 1px;
-  opacity: 0.75;
+  display: flex;
+  align-items: flex-start;
+}
+
+.mct-icon-svg {
+  width: 20px;
+  height: 20px;
+  /* Use Google Calendar's own CSS var so the icon colour flips in dark mode */
+  fill: var(--gm3-sys-color-on-surface-variant, #5f6368);
+  display: block;
+  flex-shrink: 0;
 }
 
 .mct-content-col {
@@ -30,8 +44,8 @@
 
 .mct-main-text {
   font-size: 14px;
-  color: #202124;
-  line-height: 1.4;
+  color: var(--gm3-sys-color-on-surface, #202124);
+  line-height: 20px;
 }
 
 .mct-main-text strong {
@@ -40,13 +54,13 @@
 
 .mct-sub-text {
   font-size: 12px;
-  color: #5f6368;
+  color: var(--gm3-sys-color-on-surface-variant, #5f6368);
   margin-top: 2px;
   line-height: 1.4;
 }
 
 .mct-settings-link {
-  color: #1a73e8;
+  color: var(--gm3-sys-color-primary, #1a73e8);
   text-decoration: none;
 }
 
